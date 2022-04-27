@@ -108,7 +108,7 @@ const Navbar = () => {
         <Left>
           <Language>FR</Language>
           <SearchContainer>
-            <Input placeholder="Search" />
+            <Input placeholder="Rechercher" />
             <svg width="1.2rem" height="1.2rem" viewBox="0 0 15 15">
               <path
                 fill="none"
