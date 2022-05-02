@@ -76,7 +76,7 @@ const Desc = styled.p`
 
 const Button = styled.button`
   padding: 0.7rem;
-  border:none;
+  border:2px solid teal;
   font-size: 1.25rem;
   background-color: white;
   border-radius: 2rem;

@@ -42,6 +42,7 @@ background-color: white;
 color: gray;
 cursor: pointer;
 font-weight: 600;
+border: 2px solid teal;
 &:hover {
     background-color: teal;
     color: white
