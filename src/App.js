@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import Home from './pages/Home';
 import ProductList from './pages/ProductList';
@@ -11,6 +11,7 @@ import Annoncement from './components/Annoncement';
 import Navbar from './components/Navbar';
 
 const App = () => {
+  const user = true
   return (
     <div className="App">
       <Router>
@@ -18,8 +19,8 @@ const App = () => {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/produit" element={<Product />} />
-          <Route path="/listProduit" element={<ProductList />} />
+          <Route path="/produits/:categories" element={<ProductList />} />
+          <Route path="/produit/:id"  element={<Product />} />
           <Route path="/connexion" element={<Login />} />
           <Route path="/panier" element={<Cart />} />
           <Route path="/enregistrement" element={<Register />} />

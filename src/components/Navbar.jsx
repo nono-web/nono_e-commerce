@@ -122,8 +122,8 @@ const Navbar = () => {
           <Logo onClick={onHome}>👕NonoduWeb👗</Logo>
         </Center>
         <Right>
-          <MenuItem onClick={onLogin}>Inscription</MenuItem>
-          <MenuItem onClick={onRegister}>Connexion</MenuItem>
+          <MenuItem onClick={onRegister}>Inscription</MenuItem>
+          <MenuItem onClick={onLogin}>Connexion</MenuItem>
           <MenuItem onClick={onCart}>
             <Counter>1</Counter>
             <svg width="2rem" height="2rem" viewBox="0 0 24 24">
