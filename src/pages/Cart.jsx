@@ -1,11 +1,18 @@
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { mobile } from '../responsive';
+import StripeCheckout from 'react-stripe-checkout';
+import { useEffect, useState } from 'react';
+import { userRequest } from '../requestMethods';
+import { useNavigate } from 'react-router-dom';
+
+const KEY = process.env.REACT_APP_STRIPE;
 
 const Container = styled.div``;
 
 const Wrapper = styled.div`
   padding: 1.25rem;
-  ${mobile({padding: "0.7rem"})}
+  ${mobile({ padding: '0.7rem' })}
 `;
 
 const Title = styled.h1`
@@ -37,7 +44,7 @@ const TopButton = styled.button`
 `;
 
 const TopTexts = styled.div`
-${mobile({display: "none"})}
+  ${mobile({ display: 'none' })}
 `;
 const TopText = styled.span`
   text-decoration: underline;
@@ -48,7 +55,7 @@ const TopText = styled.span`
 const Bottom = styled.div`
   display: flex;
   justify-content: space-between;
-  ${mobile({flexDirection: "column"})}
+  ${mobile({ flexDirection: 'column' })}
 `;
 const Info = styled.div`
   flex: 3;
@@ -57,7 +64,7 @@ const Info = styled.div`
 const Product = styled.div`
   display: flex;
   justify-content: space-between;
-  ${mobile({flexDirection: "column"})}
+  ${mobile({ flexDirection: 'column' })}
 `;
 
 const ProductDetail = styled.div`
@@ -84,6 +91,7 @@ const ProductColor = styled.div`
   width: 1.25rem;
   height: 1.25rem;
   border-radius: 50%;
+  border: 1px solid teal;
   background-color: ${(props) => props.color};
 `;
 
@@ -105,12 +113,12 @@ const ProductAmountContainer = styled.div`
 const ProductAmount = styled.div`
   font-size: 1.6rem;
   margin: 0.3rem;
-  ${mobile({margin: "0.3rem 1rem"})}
+  ${mobile({ margin: '0.3rem 1rem' })}
 `;
 const ProductPrice = styled.div`
   font-size: 2rem;
   font-weight: 200;
-  ${mobile({marginBottom: "1rem"})}
+  ${mobile({ marginBottom: '1rem' })}
 `;
 
 const Hr = styled.hr`
@@ -158,6 +166,27 @@ const SummaryButton = styled.button`
 `;
 
 const Cart = () => {
+  const navigator = useNavigate();
+  const cart = useSelector((state) => state.cart);
+  const [stripeToken, setStripeToken] = useState(null);
+  const onToken = (token) => {
+    setStripeToken(token);
+  };
+  useEffect(() => {
+    const makeRequest = async () => {
+      try {
+        const res = await userRequest.post('/checkout/payment', {
+          tokenId: stripeToken.id,
+          amount: cart.total * 100,
+        });
+        navigator('/success', {
+          stripeData: res.data,
+          products: cart,
+        });
+      } catch {}
+    };
+    stripeToken && makeRequest();
+  }, [stripeToken, cart, navigator]);
   return (
     <Container>
       <Wrapper>
@@ -172,83 +201,54 @@ const Cart = () => {
         </Top>
         <Bottom>
           <Info>
-            <Product>
-              <ProductDetail>
-                <Image src="https://hips.hearstapps.com/vader-prod.s3.amazonaws.com/1614188818-TD1MTHU_SHOE_ANGLE_GLOBAL_MENS_TREE_DASHERS_THUNDER_b01b1013-cd8d-48e7-bed9-52db26515dc4.png?crop=1xw:1.00xh;center,top&resize=480%3A%2A" />
-                <Details>
-                  <ProductName>
-                    <b>Produit: </b> JESSIE
-                  </ProductName>
-                  <ProductId>
-                    <b>ID: </b> 25253625214
-                  </ProductId>
-                  <ProductColor color="black" />
-                  <ProductSize>
-                    <b>Pointure: </b> 37.5
-                  </ProductSize>
-                </Details>
-              </ProductDetail>
-              <PriceDetail>
-                <ProductAmountContainer>
-                  <svg width="1em" height="1em" viewBox="0 0 24 24">
-                    <path
-                      fill="currentColor"
-                      d="M18 13H6c-.55 0-1-.45-1-1s.45-1 1-1h12c.55 0 1 .45 1 1s-.45 1-1 1z"
-                    ></path>
-                  </svg>
-                  <ProductAmount>2</ProductAmount>
-                  <svg width="1em" height="1em" viewBox="0 0 24 24">
-                    <path
-                      fill="currentColor"
-                      d="M19 12.998h-6v6h-2v-6H5v-2h6v-6h2v6h6z"
-                    ></path>
-                  </svg>
-                </ProductAmountContainer>
-                <ProductPrice> 30€</ProductPrice>
-              </PriceDetail>
-            </Product>
+            {cart.products.map((product) => (
+              <Product>
+                <ProductDetail>
+                  <Image src={product.img} />
+
+                  <Details>
+                    <ProductName>
+                      <b>Produit: </b> {product.title}
+                    </ProductName>
+                    <ProductId>
+                      <b>ID: </b> {product._id}
+                    </ProductId>
+                    <ProductColor color={product.color} />
+                    <ProductSize>
+                      <b>Taille : </b> {product.size}
+                    </ProductSize>
+                  </Details>
+                </ProductDetail>
+                <PriceDetail>
+                  <ProductAmountContainer>
+                    <svg width="1em" height="1em" viewBox="0 0 24 24">
+                      <path
+                        fill="currentColor"
+                        d="M18 13H6c-.55 0-1-.45-1-1s.45-1 1-1h12c.55 0 1 .45 1 1s-.45 1-1 1z"
+                      ></path>
+                    </svg>
+                    <ProductAmount>{product.quantity}</ProductAmount>
+                    <svg width="1em" height="1em" viewBox="0 0 24 24">
+                      <path
+                        fill="currentColor"
+                        d="M19 12.998h-6v6h-2v-6H5v-2h6v-6h2v6h6z"
+                      ></path>
+                    </svg>
+                  </ProductAmountContainer>
+                  <ProductPrice>
+                    {' '}
+                    {product.price * product.quantity}€
+                  </ProductPrice>
+                </PriceDetail>
+              </Product>
+            ))}
             <Hr />
-            <Product>
-              <ProductDetail>
-                <Image src="https://i.pinimg.com/originals/2d/af/f8/2daff8e0823e51dd752704a47d5b795c.png" />
-                <Details>
-                  <ProductName>
-                    <b>Produit: </b> HAKURA TEE-SHIRT
-                  </ProductName>
-                  <ProductId>
-                    <b>ID: </b> 25253625214
-                  </ProductId>
-                  <ProductColor color="gray" />
-                  <ProductSize>
-                    <b>Taille: </b> M
-                  </ProductSize>
-                </Details>
-              </ProductDetail>
-              <PriceDetail>
-                <ProductAmountContainer>
-                  <svg width="1em" height="1em" viewBox="0 0 24 24">
-                    <path
-                      fill="currentColor"
-                      d="M18 13H6c-.55 0-1-.45-1-1s.45-1 1-1h12c.55 0 1 .45 1 1s-.45 1-1 1z"
-                    ></path>
-                  </svg>
-                  <ProductAmount>1</ProductAmount>
-                  <svg width="1em" height="1em" viewBox="0 0 24 24">
-                    <path
-                      fill="currentColor"
-                      d="M19 12.998h-6v6h-2v-6H5v-2h6v-6h2v6h6z"
-                    ></path>
-                  </svg>
-                </ProductAmountContainer>
-                <ProductPrice> 20€</ProductPrice>
-              </PriceDetail>
-            </Product>
           </Info>
           <Summary>
             <SummaryTitle>Récapitulatif de la commande</SummaryTitle>
             <SummaryItem>
               <SummaryItemText>Total: </SummaryItemText>
-              <SummaryItemPrice> 80€</SummaryItemPrice>
+              <SummaryItemPrice> {cart.total}€</SummaryItemPrice>
             </SummaryItem>
             <SummaryItem>
               <SummaryItemText>Expédition Estimé :</SummaryItemText>
@@ -262,9 +262,21 @@ const Cart = () => {
             </SummaryItem>
             <SummaryItem type="total">
               <SummaryItemText>Total: </SummaryItemText>
-              <SummaryItemPrice> 80€</SummaryItemPrice>
+              <SummaryItemPrice> {cart.total}€</SummaryItemPrice>
             </SummaryItem>
-            <SummaryButton>Payez Maintenant</SummaryButton>
+            <StripeCheckout
+              name="NonoduWeb"
+              image="https://zupimages.net/up/22/21/og5h.png"
+              billingAddress
+              shippingAddress
+              description={`Votre total est de  ${cart.total}€`}
+              amount={cart.total * 100}
+              token={onToken}
+              stripeKey={KEY}
+            >
+              <SummaryButton>Payez Maintenant</SummaryButton>
+            </StripeCheckout>
+            /
           </Summary>
         </Bottom>
       </Wrapper>

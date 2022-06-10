@@ -55,7 +55,7 @@ const CategoryItem = ({ item }) => {
   const navigator = useNavigate();
 
   const handleClick = () => {
-      navigator("/listProduit")
+      navigator(`/produits/${item.cat}`)
   }
 
   return (

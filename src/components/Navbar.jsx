@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { mobile } from '../responsive';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const Container = styled.div`
   height: 3.75rem;
@@ -84,6 +85,7 @@ const Counter = styled.div`
 `;
 
 const Navbar = () => {
+  const quantity = useSelector(state=>state.cart.quantity)
   const navigator = useNavigate();
 
   const onHome = () => {
@@ -101,8 +103,11 @@ const Navbar = () => {
   const onCart = () => {
     navigator('/panier');
   };
+  
 
   return (
+
+    
     <Container>
       <Wrapper>
         <Left>
@@ -125,7 +130,7 @@ const Navbar = () => {
           <MenuItem onClick={onRegister}>Inscription</MenuItem>
           <MenuItem onClick={onLogin}>Connexion</MenuItem>
           <MenuItem onClick={onCart}>
-            <Counter>1</Counter>
+            <Counter>{quantity}</Counter>
             <svg width="2rem" height="2rem" viewBox="0 0 24 24">
               <path
                 fill="currentColor"

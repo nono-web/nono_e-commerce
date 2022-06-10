@@ -9,9 +9,12 @@ import Cart from './pages/Cart';
 import Footer from './components/Footer';
 import Annoncement from './components/Annoncement';
 import Navbar from './components/Navbar';
+import Success from './pages/Success'
+import { useSelector } from 'react-redux';
 
 const App = () => {
-  const user = true
+  const user = useSelector((state) => state.user.currentUser);
+  console.log("user",user)
   return (
     <div className="App">
       <Router>
@@ -21,9 +24,10 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/produits/:categories" element={<ProductList />} />
           <Route path="/produit/:id"  element={<Product />} />
-          <Route path="/connexion" element={<Login />} />
           <Route path="/panier" element={<Cart />} />
-          <Route path="/enregistrement" element={<Register />} />
+          <Route path="/success" element={<Success/>} />
+          <Route path="/connexion"  element={user ? <Navigate to="/" /> : <Login />} />
+          <Route path="/enregistrement" element={user ? <Navigate to="/" /> : <Register/>} />
         </Routes>
         <Footer />
       </Router>

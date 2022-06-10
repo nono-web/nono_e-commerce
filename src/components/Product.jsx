@@ -75,7 +75,7 @@ const Product = ({ item }) => {
   };
 
   const onSearch = () => {
-    navigator('/produit');
+    navigator(`/produit/${item._id}`);
   };
 
   return (
