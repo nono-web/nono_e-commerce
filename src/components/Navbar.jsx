@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { mobile } from '../responsive';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { logout } from '../redux/apiCalls';
+import { persistor, store } from '../redux/store';
 
 const Container = styled.div`
   height: 3.75rem;
@@ -85,8 +88,11 @@ const Counter = styled.div`
 `;
 
 const Navbar = () => {
-  const quantity = useSelector(state=>state.cart.quantity)
+  const quantity = useSelector((state) => state.cart.quantity);
+  const user = useSelector((state) => state.user.currentUser);
+  const { isFetching, error } = useSelector((state) => state.user);
   const navigator = useNavigate();
+  const dispatch = useDispatch();
 
   const onHome = () => {
     navigator('/');
@@ -103,11 +109,17 @@ const Navbar = () => {
   const onCart = () => {
     navigator('/panier');
   };
-  
+
+  const handleDisconnect = () => {
+    logout(dispatch, user.currentUser );
+    console.log('handledisconnect', user.currentUser)
+    localStorage.removeItem('persist:nono');
+  };
+
+  useEffect(() => {
+   }, [user]);
 
   return (
-
-    
     <Container>
       <Wrapper>
         <Left>
@@ -127,8 +139,17 @@ const Navbar = () => {
           <Logo onClick={onHome}>👕NonoduWeb👗</Logo>
         </Center>
         <Right>
+          {user.currentUser ? (
+            <>
+            <MenuItem>Bienvenue {user.username}</MenuItem>
+            <MenuItem onClick={()=> handleDisconnect() }>Deconnexion</MenuItem>
+          </>
+          ) : 
+          <>
           <MenuItem onClick={onRegister}>Inscription</MenuItem>
           <MenuItem onClick={onLogin}>Connexion</MenuItem>
+        </>
+          }
           <MenuItem onClick={onCart}>
             <Counter>{quantity}</Counter>
             <svg width="2rem" height="2rem" viewBox="0 0 24 24">
