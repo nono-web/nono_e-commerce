@@ -114,6 +114,7 @@ const Navbar = () => {
     logout(dispatch, user.currentUser );
     console.log('handledisconnect', user.currentUser)
     localStorage.removeItem('persist:nono');
+    navigator('/')
   };
 
   useEffect(() => {
