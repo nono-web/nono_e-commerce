@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { logout } from '../redux/apiCalls';
-import { persistor, store } from '../redux/store';
+
 
 const Container = styled.div`
   height: 3.75rem;
@@ -90,7 +90,6 @@ const Counter = styled.div`
 const Navbar = () => {
   const quantity = useSelector((state) => state.cart.quantity);
   const user = useSelector((state) => state.user.currentUser);
-  const { isFetching, error } = useSelector((state) => state.user);
   const navigator = useNavigate();
   const dispatch = useDispatch();
 
