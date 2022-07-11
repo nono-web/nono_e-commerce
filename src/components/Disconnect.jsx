@@ -7,7 +7,7 @@ const Disconnect = () => {
   const user = useSelector((state) => state.user.currentUser);
 
   const logout = async () => {
-    const res = await  axios.get('http://api.ecommerce.nonoweb17.fr/api/auth/logout');
+    const res = await  axios.get('https://api.ecommerce.nonoweb17.fr/api/auth/logout');
     console.log('logout', res)
   };
 
