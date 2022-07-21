@@ -19,8 +19,8 @@ const Products = ({ cat, filters, sort }) => {
       try {
         const res = await axios.get(
           cat
-            ? `http://api.ecommerce.nonoweb17.fr/api/products?category=${cat}`
-            : 'http://api.ecommerce.nonoweb17.fr/api/products'
+            ? `http://api-ecommerce.nonoweb17.fr/api/products?category=${cat}`
+            : 'http://api-ecommerce.nonoweb17.fr/api/products'
         );
         setProducts(res.data);
       } catch (err) {}
